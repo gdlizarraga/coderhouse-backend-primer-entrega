@@ -1,0 +1,25 @@
+{
+  "name": "servidor-productos-carritos",
+  "version": "1.0.0",
+  "description": "Servidor Node.js con Express para manejo de productos y carritos",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js"
+  },
+  "keywords": [
+    "express",
+    "nodejs",
+    "products",
+    "carts",
+    "api"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
