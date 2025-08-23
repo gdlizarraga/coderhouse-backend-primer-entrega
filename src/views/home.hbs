@@ -1,0 +1,31 @@
+<div class="row">
+  <div class="col-12">
+    <h1 class="mb-4 text-center text-white bg-primary p-3 rounded">Lista de
+      Productos</h1>
+
+    {{#if products}}
+      <div class="row">
+        {{#each products}}
+          <div class="col-4 mb-3">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">{{title}}</h5>
+                <p class="card-text">{{description}}</p>
+                <p class="card-text">
+                  <small class="text-muted">Código: {{code}}</small><br />
+                  <small class="text-muted">Stock: {{stock}}</small><br />
+                  <small class="text-muted">Categoría: {{category}}</small>
+                </p>
+                <h6 class="text-success">${{price}}</h6>
+              </div>
+            </div>
+          </div>
+        {{/each}}
+      </div>
+    {{else}}
+      <div class="alert alert-info text-center" role="alert">
+        No hay productos disponibles
+      </div>
+    {{/if}}
+  </div>
+</div>

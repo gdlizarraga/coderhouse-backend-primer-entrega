@@ -1,13 +1,1 @@
-[
-  {
-    "id": 1,
-    "title": "Clavos 999",
-    "description": "MODIFICACION REALIZADA...!!!",
-    "code": 55443,
-    "price": 7000,
-    "status": true,
-    "stock": 2,
-    "category": "Herramientas",
-    "thumbnails": []
-  }
-]
+[]
