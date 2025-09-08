@@ -28,19 +28,6 @@ Este proyecto implementa un servidor Node.js con Express para el manejo de produ
     │   └── CartManager.js     # Gestor de carritos
     ├── routes/            # Rutas de la API
     │   ├── products.js    # Rutas de productos
-    │   └── carts.js       # Rutas de carritos
-    ├── views/             # Vistas HTML con Handlebars
-    │   ├── layouts/       # Layouts principales
-    │   │   └── main.hbs   # Layout base con Bootstrap y SweetAlert2
-    │   ├── home.hbs       # Vista estática de productos
-    │   └── realTimeProducts.hbs  # Vista en tiempo real con WebSockets
-    ├── public/            # Archivos estáticos
-    │   ├── js/           # Scripts del cliente
-    │   │   └── rtp.js    # JavaScript para tiempo real
-    │   └── favicon/      # Iconos del sitio
-    └── data/              # Archivos de persistencia
-        ├── products.json  # Base de datos de productos
-        └── carts.json     # Base de datos de carritos
 ```
 
 ## Rutas Disponibles
@@ -84,38 +71,16 @@ El servidor implementa Socket.io para comunicación en tiempo real:
 
 ## Características de la Interfaz Web
 
-### Vista Home (/)
-
-- Lista estática de productos en cards Bootstrap
 - Diseño responsivo
 - Información completa de cada producto
 
-### Vista Real Time Products (/realtimeproducts)
-
 - **Actualización automática** de la lista al agregar/eliminar productos
-- **Formulario integrado** para agregar productos
-- **Eliminación en tiempo real** con botones en cada producto
-- **Notificaciones SweetAlert2** para éxito y errores
-- **Validación de campos** obligatorios
-
-## Estructura de Datos
 
 ### Producto
 
-```
-json
-{
-  "id": 1,
-  "title": "Producto ejemplo",
-  "description": "Descripción del producto",
-  "code": "PROD001",
-  "price": 100,
-  "status": true,
-  "stock": 50,
-  "category": "Categoría",
-  "thumbnails": ["imagen1.jpg", "imagen2.jpg"]
-}
-```
+"id": 1,
+"title": "Producto ejemplo",
+"description": "Descripción del producto",
 
 ### Carrito Mejorado (GET /api/carts/:cid)
 
@@ -137,28 +102,12 @@ Devuelve información completa del producto:
     "quantity": 2
   }
 ]
-```
-
-## Cómo usar la aplicación
-
 ### 1. Acceso a las vistas web
-
-- Navega a `http://localhost:8080/` para ver la lista estática de productos
-- Navega a `http://localhost:8080/realtimeproducts` para la interfaz en tiempo real
 
 ### 2. Agregar productos en tiempo real
 
-- En la vista `/realtimeproducts`, completa el formulario con:
-  - Título
-  - Descripción
-  - Precio
-  - Código (único)
-  - Stock
-  - Categoría
-- El producto aparecerá automáticamente en la lista sin recargar la página
 
 ### 3. Eliminar productos en tiempo real
-
 - Haz clic en "Eliminar" en cualquier producto de la vista `/realtimeproducts`
 - El producto se eliminará automáticamente de la lista
 
@@ -167,31 +116,37 @@ Devuelve información completa del producto:
 ### Crear un producto
 
 ```
+
 POST http://localhost:8080/api/products/
 Content-Type: application/json
 
 {
-  "title": "Laptop Gaming",
-  "description": "Laptop para gaming de alta gama",
-  "code": "LAP001",
-  "price": 1500,
-  "stock": 10,
-  "category": "Electrónicos",
-  "thumbnails": ["laptop1.jpg", "laptop2.jpg"]
+"title": "Laptop Gaming",
+"description": "Laptop para gaming de alta gama",
+"code": "LAP001",
+"price": 1500,
+"stock": 10,
+"category": "Electrónicos",
+"thumbnails": ["laptop1.jpg", "laptop2.jpg"]
 }
+
 ```
 
 ### Crear un carrito
 
 ```
+
 POST http://localhost:8080/api/carts/
+
 ```
 
 ### Agregar producto al carrito
 
 ```
+
 POST http://localhost:8080/api/carts/1/product/1
-```
+
+````
 
 ## Tecnologías Utilizadas
 
@@ -220,7 +175,8 @@ POST http://localhost:8080/api/carts/1/product/1
 2. Instala las dependencias:
    ```bash
    npm install
-   ```
+````
+
 3. Inicia el servidor:
    ```bash
    npm start
@@ -246,10 +202,10 @@ POST http://localhost:8080/api/carts/1/product/1
 
 ✅ **Motor de plantillas Handlebars** configurado  
 ✅ **WebSockets con Socket.io** para tiempo real  
-✅ **Vista Home** con lista estática de productos  
-✅ **Vista RealTimeProducts** con funcionalidad en tiempo real  
 ✅ **Bootstrap 5** para diseño responsive  
 ✅ **SweetAlert2** para notificaciones elegantes  
+✅ **Vista Home** con lista estática de productos  
+✅ **Vista RealTimeProducts** con funcionalidad en tiempo real  
 ✅ **Formulario completo** para agregar productos  
 ✅ **Eliminación en tiempo real** de productos  
 ✅ **Información completa** de productos en carritos (API mejorada)  

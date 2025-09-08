@@ -1,31 +1,136 @@
 <div class="row">
-  <div class="col-12">
-    <h1 class="mb-4 text-center text-white bg-primary p-3 rounded">Lista de
-      Productos</h1>
-
+  <div class="col-12">    
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <h3 id="description-list-alignment" class="mb-0">Lista de Productos</h3>
+      <div class="d-flex align-items-center gap-2">
+        <span class="me-2">Carritos activos</span>
+        <select id="activeCartsSelect" class="form-select form-select-sm" style="width: 250px;">
+          {{#each carts}}
+            <option value="{{this._id}}">{{this._id}}</option>
+          {{/each}}
+        </select>
+        <button style="border: none; background: none;" onclick="addCart()">
+          <img src="/agregar.png" alt="Crear Carrito" style="width: 1.5rem;" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Crear Carrito"/>
+        </button>
+        <button style="border: none; background: none;" onclick="refreshCart()">
+          <img src="/refresh.jpg" alt="Actualizar Carrito" style="width: 1.5rem;" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Actualizar Carrito"/>
+        </button>
+        <button style="border: none; background: none;" onclick="verDetalleCarrito()">
+          <img src="/lupa.png" alt="Ver detalle Carrito" style="width: 1.5rem;" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ver detalle Carrito"/>
+        </button>
+      </div>
+    </div>
+    <hr />
     {{#if products}}
       <div class="row">
         {{#each products}}
-          <div class="col-4 mb-3">
-            <div class="card">
-              <div class="card-body">
-                <h5 class="card-title">{{title}}</h5>
-                <p class="card-text">{{description}}</p>
-                <p class="card-text">
-                  <small class="text-muted">Código: {{code}}</small><br />
-                  <small class="text-muted">Stock: {{stock}}</small><br />
-                  <small class="text-muted">Categoría: {{category}}</small>
-                </p>
-                <h6 class="text-success">${{price}}</h6>
+          <div
+            class="col-md-6 col-lg-4 mb-4 d-flex align-items-stretch"
+            data-id="{{this._id}}"
+          >
+            <div class="card shadow-sm h-100 border-0">
+              <div class="position-relative">
+                {{#if thumbnail}}
+                  <img
+                    src="/productos/{{thumbnail}}"
+                    class="card-img-top p-3"
+                    alt="Imagen del producto"
+                    style="height: 220px; object-fit: contain; background: #f5f5f5; border-radius: 1rem;"
+                  />
+                {{else}}
+                  <img
+                    src="/productos/sin_images.png"
+                    class="card-img-top p-3"
+                    alt="Imagen del producto"
+                    style="height: 220px; object-fit: contain; background: #f5f5f5; border-radius: 1rem;"
+                  />
+                {{/if}}
+                <span
+                  class="badge bg-warning text-dark position-absolute top-0 end-0 m-2"
+                >Nuevo</span>
+                <button
+                  class="btn btn-light btn-sm position-absolute"
+                  style="bottom: 12px; right: 16px;"
+                  title="Agregar al carrito"
+                  onclick="addToCart('{{this._id}}')"
+                >                  
+                  <img src="/carrito.png" alt="Agregar al carrito" style="width: 1.5rem;  ">
+                </button>
+              </div>
+              <div class="card-body d-flex flex-column">
+                <h5
+                  class="card-title mb-1"
+                  style="font-weight: 600; color: #333;"
+                >{{title}}</h5>
+                <p
+                  class="card-text mb-2"
+                  style="min-height: 48px; color: #555;"
+                >{{description}}</p>
+                <ul class="list-unstyled mb-2">
+                  <li><span class="badge bg-info text-dark">Código:
+                      {{code}}</span></li>
+                  <li><span class="badge bg-secondary">Stock:
+                      {{stock}}</span></li>
+                  <li><span class="badge bg-light text-dark">Categoría:
+                      {{category}}</span></li>
+                </ul>
+                <div
+                  class="mt-auto d-flex justify-content-between align-items-center"
+                >
+                  <span class="fs-4 fw-bold text-success">${{price}}</span>
+                  <div class="d-flex gap-2">
+                    <a href="/products/{{this._id}}" class="btn btn-primary btn-sm px-3">Ver</a>
+                    <button
+                      class="btn btn-outline-danger btn-sm px-3"
+                      onclick="deleteProduct('{{this._id}}')"
+                    >
+                      <i class="bi bi-trash"></i>
+                      Eliminar
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         {{/each}}
       </div>
+      {{#if pagination}}
+        {{#if products.length}}
+          <nav aria-label="Paginación de productos">
+            <ul class="pagination justify-content-center mt-4">
+              <li class="page-item {{#unless pagination.hasPrevPage}}disabled{{/unless}}">
+                <a class="page-link" href="?page={{pagination.prevPage}}" tabindex="-1">Anterior</a>
+              </li>
+              {{#each pagination.pageNumbers}}
+                <li class="page-item {{#if this.active}}active{{/if}}">
+                  <a class="page-link" href="?page={{this.number}}">{{this.number}}</a>
+                </li>
+              {{/each}}
+              <li class="page-item {{#unless pagination.hasNextPage}}disabled{{/unless}}">
+                <a class="page-link" href="?page={{pagination.nextPage}}">Siguiente</a>
+              </li>
+            </ul>
+          </nav>
+        {{/if}}
+      {{/if}}
     {{else}}
       <div class="alert alert-info text-center" role="alert">
         No hay productos disponibles
       </div>
     {{/if}}
   </div>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/rtp.js"></script>
+  <script src="/js/refreshCart.js"></script>
+  <script src="/js/addCart.js"></script>
+  <script src="/js/addToCart.js"></script>
+  <script src="/js/verDetalleCarrito.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+      tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+        new bootstrap.Tooltip(tooltipTriggerEl);
+      });
+    });
+  </script>
 </div>

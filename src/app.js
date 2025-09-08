@@ -1,17 +1,29 @@
 const express = require("express");
+const mongoose = require("mongoose");
+
+const { conectarDB } = require("./config/db.js");
+const { config } = require("./config/config.js");
+
 const { create } = require("express-handlebars");
 const http = require("http");
 const socketIo = require("socket.io");
 const path = require("path");
 
-const productsRouter = require("./routes/products");
-const cartsRouter = require("./routes/carts");
-const ProductManager = require("./managers/ProductManager");
+// Configuración Ruteo
+const productsRouterFactory = require("./routes/productsRouter.js");
+const cartsRouter = require("./routes/cartsRouter.js");
+const viewProductsRouter = require("./routes/viewProductsRouter.js");
+const viewProductsRealTimeRouter = require("./routes/viewProductsRealTimeRouter.js");
+const viewProductDetailRouter = require("./routes/viewProductDetailRouter.js");
+const viewCartDetailRouter = require("./routes/viewCartDetailRouter.js");
+
+// Configuración Managers
+const ProductManager = require("./dao/ProductsManager.js");
 
 const app = express();
 const serverHTTP = http.createServer(app);
 const io = socketIo(serverHTTP);
-const PORT = 8080;
+const PORT = config.PORT;
 const productManager = new ProductManager();
 
 // Configuración HBS
@@ -19,6 +31,13 @@ const hbs = create({
   extname: ".hbs",
   defaultLayout: "main",
   layoutsDir: path.join(__dirname, "views/layouts"),
+  helpers: {
+    eq: (a, b) => a === b,
+  },
+  runtimeOptions: {
+    allowProtoPropertiesByDefault: true,
+    allowProtoMethodsByDefault: true,
+  },
 });
 app.engine("hbs", hbs.engine);
 app.set("view engine", "hbs");
@@ -30,60 +49,23 @@ app.use(express.urlencoded({ extended: true }));
 // Servir archivos estáticos
 app.use(express.static(path.join(__dirname, "public")));
 
-// Rutas API
+// Rutas API (productos primero para asegurar el socket)
+const productsRouter = productsRouterFactory(io);
 app.use("/api/products", productsRouter);
 app.use("/api/carts", cartsRouter);
+app.use("/", viewProductsRouter);
+app.use("/", viewProductsRealTimeRouter);
+app.use("/products", viewProductDetailRouter);
+app.use("/cart", viewCartDetailRouter);
 
 // Vista Home
 app.get("/", async (req, res) => {
-  const products = await productManager.getProducts();
-  res.render("home", {
-    products,
-    title: "Home - Lista de Productos",
-  });
+  return res.status(200).json({ payload: "OK" });
 });
 
 // Vista RealTimeProducts
 app.get("/realtimeproducts", async (req, res) => {
-  const products = await productManager.getProducts();
-  res.render("realTimeProducts", {
-    products,
-    title: "Home - Productos en Tiempo Real",
-  });
-});
-
-// Websockets
-io.on("connection", async (socket) => {
-  // Enviar productos actuales al conectar
-  const products = await productManager.getProducts();
-  socket.emit("updateProducts", products);
-
-  // Agregar producto
-  socket.on("addProduct", async (data) => {
-    try {
-      await productManager.addProduct(data);
-      const updatedProducts = await productManager.getProducts();
-      io.emit("updateProducts", updatedProducts);
-      socket.emit("addProductSuccess", "Producto agregado correctamente");
-    } catch (error) {
-      console.error("Error al agregar producto:", error.message);
-      socket.emit("addProductError", error.message);
-    }
-  });
-
-  // Eliminar producto
-  socket.on("deleteProduct", async (id) => {
-    console.log("Intentando eliminar producto con id:", id);
-    try {
-      const deleted = await productManager.deleteProduct(Number(id));
-      console.log("Producto eliminado:", deleted);
-      const updatedProducts = await productManager.getProducts();
-      io.emit("updateProducts", updatedProducts);
-    } catch (error) {
-      console.error("Error al eliminar producto:", error.message);
-      socket.emit("errorMessage", error.message);
-    }
-  });
+  return res.status(200).json({ payload: "OK" });
 });
 
 // Manejo de errores 404
@@ -96,4 +78,5 @@ serverHTTP.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
 
+conectarDB(config.MONGO_URL, config.DB_NAME);
 module.exports = app;
