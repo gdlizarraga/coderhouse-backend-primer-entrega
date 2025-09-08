@@ -98,17 +98,17 @@
         {{#if products.length}}
           <nav aria-label="Paginación de productos">
             <ul class="pagination justify-content-center mt-4">
-              <li class="page-item {{#unless pagination.hasPrevPage}}disabled{{/unless}}">
-                <a class="page-link" href="?page={{pagination.prevPage}}" tabindex="-1">Anterior</a>
+          <li class="page-item {{#unless pagination.hasPrevPage}}disabled{{/unless}}">
+            <a class="page-link" href="?page={{pagination.prevPage}}{{#if query.limit}}&limit={{query.limit}}{{else}}&limit=10{{/if}}{{#if query.sort}}&sort={{query.sort}}{{/if}}" tabindex="-1">Anterior</a>
+          </li>
+          {{#each pagination.pageNumbers}}
+              <li class="page-item {{#if this.active}}active{{/if}}">
+                <a class="page-link" href="?page={{this.number}}{{#if ../query.limit}}&limit={{../query.limit}}{{else}}&limit=10{{/if}}{{#if ../query.sort}}&sort={{../query.sort}}{{/if}}">{{this.number}}</a>
               </li>
-              {{#each pagination.pageNumbers}}
-                <li class="page-item {{#if this.active}}active{{/if}}">
-                  <a class="page-link" href="?page={{this.number}}">{{this.number}}</a>
-                </li>
-              {{/each}}
-              <li class="page-item {{#unless pagination.hasNextPage}}disabled{{/unless}}">
-                <a class="page-link" href="?page={{pagination.nextPage}}">Siguiente</a>
-              </li>
+          {{/each}}
+          <li class="page-item {{#unless pagination.hasNextPage}}disabled{{/unless}}">
+            <a class="page-link" href="?page={{pagination.nextPage}}{{#if query.limit}}&limit={{query.limit}}{{else}}&limit=10{{/if}}{{#if query.sort}}&sort={{query.sort}}{{/if}}">Siguiente</a>
+          </li>
             </ul>
           </nav>
         {{/if}}

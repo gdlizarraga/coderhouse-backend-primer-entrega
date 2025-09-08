@@ -9,17 +9,13 @@ router.get("/realtimeproducts", async (req, res) => {
   try {
     // Obtener parámetros de paginación desde la query
     let { page, limit, sort, query } = req.query;
+
     page = parseInt(page) || 1;
-    if (!page) {
-      page = 1;
-    } else {
-      page = parseInt(page) || 1;
-    }
-    if (!limit) {
-      limit = 10;
-    } else {
-      limit = parseInt(limit) || 10;
-    }
+    limit =
+      limit !== undefined && limit !== null && limit !== ""
+        ? parseInt(limit)
+        : 10;
+
     // Obtener productos paginados
     const result = await productManager.getProducts(limit, page, sort, query);
     // Construir array de números de página para la vista
@@ -42,6 +38,11 @@ router.get("/realtimeproducts", async (req, res) => {
         hasNextPage: result.hasNextPage,
         nextPage: result.nextPage,
         pageNumbers,
+      },
+      query: {
+        limit: req.query.limit,
+        sort: req.query.sort,
+        // puedes agregar más parámetros si los usas
       },
       title: "Home - Productos en Tiempo Real",
     });
